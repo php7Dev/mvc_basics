@@ -7,23 +7,22 @@ use PDOException;
 
 class Model
 {
-    protected static ?PDO $pdo = null;
-
+    protected static $pdo = null;
     protected string $table;
 
     public function __construct()
     {
-        if (!self::$pdo) {
-            $this->connect();
+        if (self::$pdo === null) {
+            self::con();
         }
     }
 
-    protected function connect()
+    protected static function con()
     {
-        $host = '127.0.0.1'; // or you can use localhost.
-        $db   = 'databaseName';
-        $user = 'myName';
-        $pass = 'pwd';
+        $host = 'localhost';
+        $db   = 'exampledb';
+        $user = 'root';
+        $pass = '347913';
         $charset = 'utf8mb4';
 
         $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -45,6 +44,15 @@ class Model
     {
         $stmt = self::$pdo->query("SELECT * FROM {$this->table}");
         return $stmt->fetchAll();
+    }
+
+    public function insert(array $data)
+    {
+        $columns = implode(', ', array_keys($data));
+        $placeholders = rtrim(str_repeat('?, ', count($data)), ', ');
+        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
+        $stmt = self::$pdo->prepare($sql);
+        return $stmt->execute(array_values($data));
     }
 
 }

@@ -6,9 +6,7 @@ use Core\Model;
 
 class Users extends Model{
 
-    //protected string $table = 'users';
-
-    public function __construct(){}
+    protected string $table = 'users';
 
     public function getUsers(){
         return [

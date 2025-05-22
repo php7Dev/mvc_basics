@@ -19,8 +19,15 @@ class UserController{
     }
 
     public function list(){
-      $user = new Users();
-        $userData = $user->getUsers();
-        View::render("home",['users' => $userData]);  
+      
+        $user = new Users();
+     
+        $user->insert([
+            'u_name' => 'Nagd',
+            'u_pwd' => 29,
+            'u_cdate' => date('Y-m-d')
+       ]);
+
     }
 }
+
