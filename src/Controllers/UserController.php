@@ -18,17 +18,16 @@ class UserController{
 
     }
 
+    public function create(Requests $requests){
+       
+        $user = new Users();
+        $user->insert($requests->all());
+
+    }
+
     public function list(){
       
-        $user = new Users();
-     
-        /*
-        $user->insert([
-            'u_name' => 'Nagd',
-            'u_pwd' => 29,
-            'u_cdate' => date('Y-m-d')
-       ]);*/
-
+       $user = new Users();
        var_dump($user->all());
 
     }

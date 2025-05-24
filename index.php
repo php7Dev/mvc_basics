@@ -4,37 +4,50 @@ require "vendor/autoload.php";
 
 use Core\App;
 
-$basePath = '/mvc_basics'; // adjust if your project is in a subfolder
+$basePath = '/mvc_basics'; // Change if your app lives in a subfolder
 
-// Get the request path (strip query params and base path)
+// Get request URI and method
+$method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path = rtrim(str_replace($basePath, '', $uri), '/') ?: '/';
 
+
+// Define routes with HTTP method as first-level key
 $routes = [
-    "/"             => ["HomeController" => "index"],
-    "/about"        => ["AboutController" => "index"],
-    "/user"         => ["UserController" => "index"],
-    "/user/list"    => ["UserController" => "list"],
-    "/user/@id"     => ["UserController" => "remove"], 
+    'GET' => [
+        "/"             => ["HomeController" => "index"],
+        "/about"        => ["AboutController" => "index"],
+        "/user"         => ["UserController" => "index"],
+        "/user/list"    => ["UserController" => "list"],
+        "/user/@id"     => ["UserController" => "remove"],
+    ],
+    'POST' => [
+        "/user"         => ["UserController" => "create"],
+        "/user/@id"     => ["UserController" => "update"],
+    ]
 ];
 
+// Match route based on method and path
 $route = null;
 $params = [];
 
-foreach ($routes as $routePattern => $handler) {
-    $patternRegex = preg_replace('#@(\w+)#', '(?P<\1>[^/]+)', $routePattern);
-    $patternRegex = "#^" . rtrim($patternRegex, '/') . "$#";
+if (isset($routes[$method])) {
+    foreach ($routes[$method] as $routePattern => $handler) {
+        // Replace @param with named regex capture
+        $patternRegex = preg_replace('#@(\w+)#', '(?P<\1>[^/]+)', $routePattern);
+        $patternRegex = "#^" . rtrim($patternRegex, '/') . "$#";
 
-    if (preg_match($patternRegex, $path, $matches)) {
-        $route = $handler;
+        if (preg_match($patternRegex, $path, $matches)) {
+            $route = $handler;
 
-        // Only keep named captures
-        foreach ($matches as $key => $value) {
-            if (!is_int($key)) {
-                $params[$key] = $value;
+            // Extract only named parameters
+            foreach ($matches as $key => $value) {
+                if (!is_int($key)) {
+                    $params[$key] = $value;
+                }
             }
+            break;
         }
-        break;
     }
 }
 
