@@ -22,12 +22,20 @@ class UserController{
       
         $user = new Users();
      
+        /*
         $user->insert([
             'u_name' => 'Nagd',
             'u_pwd' => 29,
             'u_cdate' => date('Y-m-d')
-       ]);
+       ]);*/
 
+       var_dump($user->all());
+
+    }
+
+    public function remove($id){
+        $user = new Users();
+        echo $user->delete($id); 
     }
 }
 

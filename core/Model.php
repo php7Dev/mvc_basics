@@ -55,4 +55,35 @@ class Model
         return $stmt->execute(array_values($data));
     }
 
+
+    public function update(array $data, $id)
+    {
+        if (empty($data)) {
+            throw new \Exception("No data provided for update.");
+        }
+
+        $setClauseParts = [];
+        foreach ($data as $column => $value) {
+            $setClauseParts[] = "$column = ?";
+        }
+
+        $setClause = implode(', ', $setClauseParts);
+
+        $sql = "UPDATE {$this->table} SET $setClause WHERE id = ?";
+        $stmt = self::$pdo->prepare($sql);
+
+        $values = array_values($data);
+        $values[] = $id;
+
+        return $stmt->execute($values);
+    }
+
+    public function delete($id)
+    {
+        $sql = "DELETE FROM {$this->table} WHERE id = ?";
+        $stmt = self::$pdo->prepare($sql);
+        return $stmt->execute([$id]);
+    }
+
+
 }
