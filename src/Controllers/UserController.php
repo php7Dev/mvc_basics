@@ -13,8 +13,12 @@ class UserController{
     }
 
     public function index(Requests $request){
-        
-        print_r($request->all());
+       
+        $user = new Users();
+        /*echo '<pre>';
+        var_dump($user->all());*/
+
+        View::render("home",["users" => $user->all()]);
 
     }
 
